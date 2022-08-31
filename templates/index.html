@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Timestamp Remover</title>
+        <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    </head>
+</head>
+
+<body>
+    <div>
+        <label>Drag and Drop File Here:</label>
+        <input class="droparea" type="file" name="upload" id="upload">
+    </div>
+    <div>
+        <form method="get">
+            Or Place Raw Text Here:
+            <br />
+
+            <textarea rows="5" cols="50" name="rawtext" id="rawtext">
+
+         </textarea>
+        </form>
+        <button class="button-go" id="remove-button" pys-onClick="remover">Remove Timestamps</button>
+        <button class="button-stop" id="clear-button" pys-onClick="clear">Clear Text</button>
+    </div>
+    <div>
+        <p id="output"></p>
+
+    </div>
+</body>
+<script>
+    let dropArea = document.querySelector('.droparea');
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false)
+    })
+
+    function preventDefaults(e) {
+        e.preventDefault()
+        e.stopPropagation()
+    }
+
+    const highlight = () => dropArea.classList.add("green-border");
+
+    const unhighlight = () => dropArea.classList.remove("green-border");
+
+    ;['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false)
+    })
+
+        ;['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false)
+        })
+
+    dropArea.addEventListener("drop", handleDrop, false);
+
+    function handleDrop(e) {
+        let dt = e.dataTransfer
+        let files = dt.files
+
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        ([...files]).forEach(uploadFile)
+    }
+    async function uploadFile(file) {
+        const url = '/'
+        let formData = new FormData()
+        console.log(file);
+
+        formData.append("file", file);
+
+        let responseOptions = {
+            // headers:{ 'Accept': 'text/csv',
+            //         'Content-Type': 'text/csv',
+            //         'action': '/',
+            //         'name':"files"},
+            method: 'POST',
+            // mode: "no-cors",
+            files: file,
+            body: formData
+        }
+        console.log(responseOptions);
+
+        await fetch(url, responseOptions)
+            .then(() => { console.log('Finished'); })
+            .catch(() => { /* Error. Inform the user */ })
+    }
+</script>
+<style>
+  .button-go {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+.button-stop {
+  background-color: #f44336; /* Red */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.input-style {
+  background-color: #f44336; /* Red */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  border-radius: 12px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+main {
+  display: flex;
+  font-size: 12px;
+  font-family: Arial;
+  flex-direction: column;
+  display:inline-block;
+}
+
+header {
+  margin-top: 1rem;
+}
+
+.droparea {
+  margin: 1rem auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-family: Arial;
+  width: 384px;
+  max-width: 100%;
+  height: 160px;
+  border: 4px dashed rgb(241 241 241);
+  border-radius: 15px;
+}
+
+.droparea i {
+  font-size: 3rem;
+  flex-grow: 1;
+  padding-top: 1rem;
+}
+
+.green-border {
+  border-color: rgb(151, 103, 227);
+}
+.block {
+  display: block;
+}
+.h-10 {
+  height: 2.5rem;
+}
+
+input[type=file] {
+  padding:5px;
+  border:2px solid #ccc;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+</style>
+</html>
